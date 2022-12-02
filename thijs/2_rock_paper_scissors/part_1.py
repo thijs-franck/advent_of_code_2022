@@ -25,7 +25,7 @@ shape_value = {
 }
 
 
-def read_moves(path: str) -> Iterable[Round]:
+def read_rounds(path: str) -> Iterable[Round]:
     with open(path) as file:
         for move in file:
             yield move.rstrip('\n').split(' ')
@@ -53,8 +53,8 @@ def calculate_total_score(rounds: Iterable[Round]):
 
 
 if __name__ == '__main__':
-    moves = read_moves(INPUT_PATH)
-    total_score = calculate_total_score(moves)
+    rounds = read_rounds(INPUT_PATH)
+    total_score = calculate_total_score(rounds)
 
     print(total_score)
 # END IF
