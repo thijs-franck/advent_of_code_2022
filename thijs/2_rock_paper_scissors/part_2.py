@@ -39,7 +39,7 @@ def read_rounds(path: str) -> Iterable[Round]:
             yield move.rstrip('\n').split(' ')
         # END LOOP
     # END WITH file
-# END read_moves
+# END read_rounds
 
 
 def play_round(move: str, strategy_name: str) -> int:
@@ -51,7 +51,7 @@ def play_round(move: str, strategy_name: str) -> int:
 
 def calculate_total_score(rounds: Iterable[Round]):
     return sum(play_round(*round) for round in rounds)
-# END calculate_total score
+# END calculate_total_score
 
 
 if __name__ == '__main__':
