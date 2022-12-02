@@ -57,4 +57,4 @@ if __name__ == '__main__':
     total_score = calculate_total_score(rounds)
 
     print(total_score)
-# END IF
+# END MAIN
