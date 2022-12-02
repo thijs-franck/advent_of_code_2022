@@ -47,8 +47,8 @@ def play_round(move: str, counter_move: str) -> int:
 # END play_round
 
 
-def calculate_total_score(moves: Iterable[Round]):
-    return sum(play_round(*move) for move in moves)
+def calculate_total_score(rounds: Iterable[Round]):
+    return sum(play_round(*round) for round in rounds)
 # END calculate_total score
 
 
