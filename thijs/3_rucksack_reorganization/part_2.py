@@ -6,7 +6,7 @@ INPUT_PATH = path.join(path.dirname(__file__), 'data')
 
 RucksackItem = str
 RucksackContent = Iterable[RucksackItem]
-Group = Tuple[RucksackContent, RucksackContent, RucksackContent]
+Group = Tuple[RucksackContent, ...]
 
 
 PRIORITY = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
