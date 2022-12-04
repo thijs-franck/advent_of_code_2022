@@ -36,10 +36,10 @@ def sections_overlap(pair: Pair) -> bool:
 if __name__ == "__main__":
     pairs = read_pairs(INPUT_PATH)
 
-    is_subset = [
+    has_overlap = [
         pair for pair in pairs
         if sections_overlap(pair)
     ]
 
-    print(len(is_subset))
+    print(len(has_overlap))
 # END MAIN
