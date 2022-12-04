@@ -29,7 +29,7 @@ def read_pairs(path: str) -> Iterable[Pair]:
 
 def sections_overlap(pair: Pair) -> bool:
     a, b = pair
-    return len(a.intersection(b)) > 0
+    return not a.isdisjoint(b)
 # END sections_overlap
 
 
