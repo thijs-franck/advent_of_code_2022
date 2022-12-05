@@ -24,8 +24,11 @@ class Move:
 
     @classmethod
     def from_input_string(cls, input_string: str):
+
+        PATTERN = r'move (?P<quantity>\d+) from (?P<source>\d+) to (?P<target>\d+)'
+
         matches = re.match(
-            pattern=r'move (?P<quantity>\d+) from (?P<source>\d+) to (?P<target>\d+)',
+            pattern=PATTERN,
             string=input_string
         )
 
@@ -33,12 +36,14 @@ class Move:
             raise MoveParseException(input_string)
         # END IF
 
-        arguments = {key: int(value)
-                     for key, value in matches.groupdict().items()}
+        arguments = {
+            key: int(value)
+            for key, value
+            in matches.groupdict().items()
+        }
 
         return cls(**arguments)
     # END from_input_string
-
 # END Move
 
 
