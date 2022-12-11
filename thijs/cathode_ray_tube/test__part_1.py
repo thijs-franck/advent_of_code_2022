@@ -2,14 +2,16 @@ from math import prod
 from os import path
 from typing import List
 
-from part_1 import ClockCircuit, Instruction, read_instructions
 from pytest import fixture
+
+from .part_1 import ClockCircuit, Instruction, read_instructions
 
 
 @fixture
 def instructions_simple() -> List[Instruction]:
     return [("noop", None), ("addx", 3), ("addx", -5)]
 # END instructions_simple
+
 
 @fixture
 def instructions_complex() -> List[Instruction]:
@@ -33,7 +35,8 @@ def test__clock_circuit_complex(instructions_complex: List[Instruction]):
 
     signals = [x for x in clock_circuit]
 
-    signal_strength = [prod(signals[cycle]) for cycle in range(19, len(signals), 40)]
+    signal_strength = [prod(signals[cycle])
+                       for cycle in range(19, len(signals), 40)]
 
     assert signal_strength == [420, 1140, 1800, 2940, 2880, 3960]
 # END test_clock_cirquit_complex

@@ -1,8 +1,9 @@
 from os import path
 from typing import List
 
-from part_2 import ClockCircuit, Instruction, read_instructions, render_pixels
 from pytest import fixture
+
+from .part_2 import ClockCircuit, Instruction, read_instructions, render_pixels
 
 
 @fixture
