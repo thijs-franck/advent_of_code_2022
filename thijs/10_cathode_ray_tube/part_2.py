@@ -59,19 +59,16 @@ class ClockCircuit:
 
             while self.cycles_remaining > 0:
                 self.ticks += 1
-
-                yield (self.ticks, self.x)
-
                 self.cycles_remaining -= 1
 
-                if self.cycles_remaining == 0:
-                    if command == "addx":
-                        self.addx(arg)
-                    elif command == "noop":
-                        self.noop()
-                    # END IF
-                # END IF
+                yield (self.ticks, self.x)
             # END LOOP
+
+            if command == "addx":
+                self.addx(arg)
+            elif command == "noop":
+                self.noop()
+            # END IF
         # END LOOP
     # END __iter__
 # END ClockCircuit
