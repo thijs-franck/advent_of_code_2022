@@ -21,6 +21,7 @@ class Node:
     label: Label = field(default_factory=lambda: str(uuid4()))
 # END Node
 
+TargetPredicate = Callable[[Node], bool]
 
 @dataclass
 class Graph:
@@ -99,8 +100,12 @@ def weight_predicate(weight: Weight):
     return weight <= 1
 # END weight_predicate
 
+def target_predicate(node: Node):
+    return node.elevation == 'a'
+# END target_predicate
 
-def shortest_path(graph: Graph, source: Label, target: Label, predicate: WeightPredicate) -> Path:
+
+def shortest_path(graph: Graph, source: Label, target_predicate: TargetPredicate, weight_predicate: WeightPredicate) -> Path:
 
     seen: Set[Label] = set()
     paths: Deque[Path] = deque([[source]])
@@ -115,16 +120,16 @@ def shortest_path(graph: Graph, source: Label, target: Label, predicate: WeightP
         # END IF
 
         edges = [
-            (label, weight)
+            label
             for label, weight in graph.edges[current_node]
-            if label not in seen and predicate(weight)
+            if label not in seen and weight_predicate(weight)
         ]
 
-        for label, _ in edges:
+        for label in edges:
             branch = list(path)
             branch.append(label)
 
-            if label == target:
+            if target_predicate(graph.nodes[label]):
                 return branch
             # END IF
 
@@ -143,16 +148,7 @@ if __name__ == "__main__":
 
     init_graph(INPUT_PATH, graph)
 
-    nodes_marked_a = (
-        label for label, node in graph.nodes.items() if node.elevation == "a"
-    )
+    result = shortest_path(graph, "E", target_predicate, weight_predicate)
 
-    paths = [
-        shortest_path(graph, label, "E", weight_predicate)
-        for label in nodes_marked_a
-    ]
-
-    result = min(len(path) for path in paths if len(path) > 0)
-
-    print(result - 1)
+    print(len(result) - 1)
 # END MAIN
