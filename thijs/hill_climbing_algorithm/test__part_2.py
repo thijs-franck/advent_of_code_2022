@@ -14,5 +14,5 @@ def test__shortest_path():
 
     result = shortest_path(graph, "E", target_predicate, weight_predicate)
 
-    print(len(result) - 1)
+    assert len(result) -1 == 29
 # END test__shortest_path

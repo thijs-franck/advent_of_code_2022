@@ -97,7 +97,7 @@ def weight_function(source: Elevation, target: Elevation):
 
 
 def weight_predicate(weight: Weight):
-    return weight <= 1
+    return weight >= -1
 # END weight_predicate
 
 def target_predicate(node: Node):
