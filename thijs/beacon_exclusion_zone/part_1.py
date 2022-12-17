@@ -73,7 +73,7 @@ def calculate_exclusion_range(sensor: Sensor, beacon: Beacon, y: int) -> Optiona
 # END points_in_range
 
 
-def are_disjoint(a: Range, b: Range):
+def are_disjoint(a: Range, b: Range) -> bool:
     """
     Returns `True` if ranges `a` and `b` do not overlap or touch at either ends.
     """
@@ -85,7 +85,7 @@ def are_disjoint(a: Range, b: Range):
 # END are_disjoint
 
 
-def calculate_segments(ranges: Iterable[Range]) -> Iterable[Segment]:
+def calculate_segments(ranges: Iterable[Range]) -> Set[Segment]:
     """
     Merges the given ranges into segments.
     """
