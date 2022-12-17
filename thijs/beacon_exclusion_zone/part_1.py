@@ -90,7 +90,7 @@ def calculate_segments(ranges: Iterable[Range]) -> Set[Segment]:
     Merges the given ranges into segments.
     """
 
-    segments: Set[Range] = set()
+    segments: Set[Segment] = set()
 
     for range in ranges:
         range_start, range_end = range
