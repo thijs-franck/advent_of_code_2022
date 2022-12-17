@@ -1,4 +1,5 @@
 import re
+from dataclasses import dataclass
 from os import path
 from typing import Iterable, Optional, Set, Tuple
 
@@ -10,6 +11,12 @@ Segment = Range
 
 Beacon = Point
 Sensor = Point
+
+
+@dataclass
+class RegexParseException(Exception):
+    input_string: str
+# END RegexParseException
 
 
 def manhattan_distance(a: Point, b: Point) -> int:
@@ -29,7 +36,7 @@ def read_sensors_and_beacons(path: str) -> Iterable[Tuple[Sensor, Beacon]]:
     Reads the input data at the given `path` and yields the position of each `Sensor` and its closest `Beacon`.
     """
 
-    PATTERN = r"Sensor at x=(?P<sensor_x>\d+), y=(?P<sensor_y>\d+): closest beacon is at x=(?P<beacon_x>\d+), y=(?P<beacon_y>\d+)"
+    PATTERN = r"Sensor at x=(?P<sensor_x>-?\d+), y=(?P<sensor_y>-?\d+): closest beacon is at x=(?P<beacon_x>-?\d+), y=(?P<beacon_y>-?\d+)"
 
     with open(path) as file:
 
@@ -42,7 +49,7 @@ def read_sensors_and_beacons(path: str) -> Iterable[Tuple[Sensor, Beacon]]:
             )
 
             if matches is None:
-                continue
+                raise RegexParseException(line)
             # END IF
 
             sensor_x, sensor_y, beacon_x, beacon_y = matches.groupdict().values()

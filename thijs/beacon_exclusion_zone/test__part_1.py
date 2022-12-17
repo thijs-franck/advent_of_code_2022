@@ -162,5 +162,5 @@ def test__count_blocked_positions(data: List[Tuple[Sensor, Beacon]]):
 
     blocked_positions = count_blocked_positions(segments)
 
-    assert blocked_positions - len(beacons_in_line) == 26
+    assert blocked_positions - len(beacons_in_line) == 4737443
 # END test__count_blocked_position
