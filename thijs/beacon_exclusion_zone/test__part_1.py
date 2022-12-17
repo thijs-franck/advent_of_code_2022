@@ -4,7 +4,7 @@ from typing import List, Tuple
 from pytest import fixture
 
 from .part_1 import (Beacon, Sensor, are_disjoint, calculate_segments,
-                     count_blocked_positions, points_in_range,
+                     count_blocked_positions, calculate_exclusion_range,
                      read_sensors_and_beacons)
 
 
@@ -22,19 +22,19 @@ def data() -> List[Tuple[Sensor, Beacon]]:
 # END data
 
 
-def test__points_in_range():
-    range = points_in_range((8, 7), (2, 10), 10)
+def test__calculate_exclusion_range():
+    range = calculate_exclusion_range((8, 7), (2, 10), 10)
     assert range == (2, 14)
 
-    range = points_in_range((9, 16), (10, 16), 17)
+    range = calculate_exclusion_range((9, 16), (10, 16), 17)
     assert range == (9, 9)
 
-    range = points_in_range((2, 18), (-2, 15), 15)
+    range = calculate_exclusion_range((2, 18), (-2, 15), 15)
     assert range == (-2, 6)
 
-    range = points_in_range((4, 9), (4, 5), 12)
+    range = calculate_exclusion_range((4, 9), (4, 5), 12)
     assert range == (3, 5)
-# END test__points_in_range
+# END test__calculate_exclusion_range
 
 
 def test__are_disjoint():
@@ -93,7 +93,7 @@ def test__count_blocked_positions_sample_data_9(sample_data: List[Tuple[Sensor, 
     beacons_in_line = set(x for x, y in beacons if y == 9)
 
     ranges = list(filter(None, (
-        points_in_range(sensor, beacon, 9)
+        calculate_exclusion_range(sensor, beacon, 9)
         for sensor, beacon
         in sample_data
     )))
@@ -113,7 +113,7 @@ def test__count_blocked_positions_sample_data_10(sample_data: List[Tuple[Sensor,
     beacons_in_line = set(x for x, y in beacons if y == 10)
 
     ranges = list(filter(None, (
-        points_in_range(sensor, beacon, 10)
+        calculate_exclusion_range(sensor, beacon, 10)
         for sensor, beacon
         in sample_data
     )))
@@ -133,7 +133,7 @@ def test__count_blocked_positions_sample_data_11(sample_data: List[Tuple[Sensor,
     beacons_in_line = set(x for x, y in beacons if y == 11)
 
     ranges = list(filter(None, (
-        points_in_range(sensor, beacon, 11)
+        calculate_exclusion_range(sensor, beacon, 11)
         for sensor, beacon
         in sample_data
     )))
@@ -153,7 +153,7 @@ def test__count_blocked_positions(data: List[Tuple[Sensor, Beacon]]):
     beacons_in_line = set(x for x, y in beacons if y == 2000000)
 
     ranges = list(filter(None, (
-        points_in_range(sensor, beacon, 2000000)
+        calculate_exclusion_range(sensor, beacon, 2000000)
         for sensor, beacon
         in data
     )))

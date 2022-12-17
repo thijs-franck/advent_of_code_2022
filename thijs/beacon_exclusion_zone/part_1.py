@@ -6,12 +6,17 @@ INPUT_PATH = path.join(path.dirname(__file__), "data")
 
 Point = Tuple[int, int]
 Range = Tuple[int, int]
+Segment = Range
 
 Beacon = Point
 Sensor = Point
 
 
 def manhattan_distance(a: Point, b: Point) -> int:
+    """
+    Calculates the manhattan distance between the given points `a` and `b`.
+    """
+
     x_a, y_a = a
     x_b, y_b = b
 
@@ -20,6 +25,9 @@ def manhattan_distance(a: Point, b: Point) -> int:
 
 
 def read_sensors_and_beacons(path: str) -> Iterable[Tuple[Sensor, Beacon]]:
+    """
+    Reads the input data at the given `path` and yields the position of each `Sensor` and its closest `Beacon`.
+    """
 
     PATTERN = r"Sensor at x=(?P<sensor_x>\d+), y=(?P<sensor_y>\d+): closest beacon is at x=(?P<beacon_x>\d+), y=(?P<beacon_y>\d+)"
 
@@ -45,7 +53,12 @@ def read_sensors_and_beacons(path: str) -> Iterable[Tuple[Sensor, Beacon]]:
 # END read_sensors_and_beacons
 
 
-def points_in_range(sensor: Sensor, beacon: Beacon, y: int) -> Optional[Range]:
+def calculate_exclusion_range(sensor: Sensor, beacon: Beacon, y: int) -> Optional[Range]:
+    """
+    Given a `sensor` and its closest `beacon`, calculates the range on axis `y` where no other beacons can exist.
+    Returns `None` if no points on axis `y` are excluded.
+    """
+
     sensor_x, sensor_y = sensor
 
     distance = manhattan_distance(sensor, beacon)
@@ -61,6 +74,10 @@ def points_in_range(sensor: Sensor, beacon: Beacon, y: int) -> Optional[Range]:
 
 
 def are_disjoint(a: Range, b: Range):
+    """
+    Returns `True` if ranges `a` and `b` do not overlap or touch at either ends.
+    """
+
     a_start, a_end = a
     b_start, b_end = b
 
@@ -68,7 +85,11 @@ def are_disjoint(a: Range, b: Range):
 # END are_disjoint
 
 
-def calculate_segments(ranges: Iterable[Range]) -> Iterable[Range]:
+def calculate_segments(ranges: Iterable[Range]) -> Iterable[Segment]:
+    """
+    Merges the given ranges into segments.
+    """
+
     segments: Set[Range] = set()
 
     for range in ranges:
@@ -77,10 +98,8 @@ def calculate_segments(ranges: Iterable[Range]) -> Iterable[Range]:
 
         for segment in segments:
             segment_start, segment_end = segment
-            # Range and segment are disjoint
-            if are_disjoint((range_start, range_end), segment):
-                continue
-            else:
+
+            if not are_disjoint((range_start, range_end), segment):
                 new_segments.discard(segment)
                 range_start = min(segment_start, range_start)
                 range_end = max(segment_end, range_end)
@@ -96,7 +115,12 @@ def calculate_segments(ranges: Iterable[Range]) -> Iterable[Range]:
 # END calculate_segments
 
 
-def count_blocked_positions(segments: Iterable[Range]) -> int:
+def count_blocked_positions(segments: Iterable[Segment]) -> int:
+    """
+    Returns the sum of the length of all given `segments`.
+    A segment has a minimum length of `1`.
+    """
+    
     return sum(1 + end - start for start, end in segments)
 # END count_blocked_positions
 
@@ -109,7 +133,7 @@ if __name__ == "__main__":
     beacons_in_line = set(x for x, y in beacons if y == 2000000)
 
     ranges = filter(None, (
-        points_in_range(sensor, beacon, 2000000)
+        calculate_exclusion_range(sensor, beacon, 2000000)
         for sensor, beacon
         in sensors_and_beacons
     ))
