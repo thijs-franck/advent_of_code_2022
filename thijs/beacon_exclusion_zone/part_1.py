@@ -97,15 +97,18 @@ def calculate_segments(ranges: Iterable[Range]) -> Set[Segment]:
         new_segments = segments.copy()
 
         for segment in segments:
+
+            if are_disjoint((range_start, range_end), segment):
+                continue
+            # END IF
+            
             segment_start, segment_end = segment
 
-            if not are_disjoint((range_start, range_end), segment):
-                new_segments.discard(segment)
-                range_start = min(segment_start, range_start)
-                range_end = max(segment_end, range_end)
-            # END IF
+            new_segments.discard(segment)
+            range_start = min(segment_start, range_start)
+            range_end = max(segment_end, range_end)
         # END LOOP
-        
+
         new_segments.add((range_start, range_end))
         segments = new_segments
     # END LOOP
@@ -119,7 +122,7 @@ def count_blocked_positions(segments: Iterable[Segment]) -> int:
     Returns the sum of the length of all given `segments`.
     A segment has a minimum length of `1`.
     """
-    
+
     return sum(1 + end - start for start, end in segments)
 # END count_blocked_positions
 
