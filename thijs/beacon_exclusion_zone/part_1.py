@@ -104,10 +104,9 @@ def calculate_segments(ranges: Iterable[Range]) -> Set[Segment]:
                 range_start = min(segment_start, range_start)
                 range_end = max(segment_end, range_end)
             # END IF
-        else:
-            new_segments.add((range_start, range_end))
         # END LOOP
-
+        
+        new_segments.add((range_start, range_end))
         segments = new_segments
     # END LOOP
 
