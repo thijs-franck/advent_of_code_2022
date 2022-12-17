@@ -101,10 +101,10 @@ def calculate_segments(ranges: Iterable[Range]) -> Set[Segment]:
             if are_disjoint((range_start, range_end), segment):
                 continue
             # END IF
-            
-            segment_start, segment_end = segment
 
             new_segments.discard(segment)
+
+            segment_start, segment_end = segment
             range_start = min(segment_start, range_start)
             range_end = max(segment_end, range_end)
         # END LOOP
