@@ -150,39 +150,44 @@ def find_unblocked_valves(tunnel_system: TunnelSystem) -> Set[Label]:
 
 def find_max_pressure_release(tunnel_system: TunnelSystem, starting_valve: Label, minutes: int):
 
-    result: int = 0
+    def dfs(current_valve: Label, closed_valves: Set[Label], time_remaining: int, pressure_released: int = 0) -> int:
+
+        result = pressure_released
+
+        for valve in closed_valves:
+
+            path = tunnel_system.shortest_path(current_valve, valve)
+
+            # A valve needs to be open for at least one minute to be of any effect
+            if len(path) > (time_remaining - 2):
+                continue
+            # END IF
+
+            flow_rate = tunnel_system.nodes[valve].flow_rate
+            pressure_over_time = flow_rate * (time_remaining - len(path))
+
+            valves_remaining = closed_valves.copy()
+            valves_remaining.discard(valve)
+
+            potential_pressure_released = dfs(
+                valve,
+                valves_remaining,
+                time_remaining - len(path),
+                pressure_released + pressure_over_time
+            )
+
+            result = max(
+                result,
+                potential_pressure_released
+            )
+        # END LOOP
+
+        return result
+    # END dfs
 
     unblocked_valves = find_unblocked_valves(tunnel_system)
 
-    for permutation in permutations(unblocked_valves):
-
-        current_valve = starting_valve
-        pressure_released = 0
-        time_spent: int = 0
-
-        for target_valve in permutation:
-            path = tunnel_system.shortest_path(
-                source=current_valve,
-                target=target_valve
-            )
-
-            # Since the starting point is included in path, len already counts the minute spent opening the valve
-            time_spent += len(path)
-
-            if time_spent >= minutes:
-                break
-            # END IF
-
-            valve = tunnel_system.nodes[target_valve]
-            pressure_released += valve.flow_rate * (minutes - time_spent)
-
-            current_valve = target_valve
-        # END LOOP
-
-        result = max(pressure_released, result)
-    # END LOOP
-
-    return result
+    return dfs(starting_valve, unblocked_valves, minutes)
 # END find_max_pressure_release
 
 
