@@ -57,7 +57,7 @@ class TunnelSystem:
 
         if source == target:
             result: Path = []
-            
+
             self._shortest_paths[source][target] = result
             self._shortest_paths[target][source] = result
 
@@ -100,7 +100,10 @@ class TunnelSystem:
         # END LOOP
 
         result = []
+        
         self._shortest_paths[source][target] = result
+        self._shortest_paths[target][source] = result
+
         return result
     # END shortest_path
 
