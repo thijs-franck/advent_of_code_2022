@@ -5,8 +5,7 @@ from pytest import fixture
 
 from .part_2 import (Beacon, Sensor, are_disjoint, calculate_exclusion_range,
                      calculate_segments, calculate_tuning_frequency,
-                     count_blocked_positions, find_missing_beacon,
-                     read_sensors_and_beacons)
+                     find_missing_beacon, read_sensors_and_beacons)
 
 
 @fixture
