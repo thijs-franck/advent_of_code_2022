@@ -27,3 +27,13 @@ def test__find_max_pressure_release_sample_data(sample_data: List[Valve]):
 
     assert max_pressure_release == 1651
 # END test__find_max_pressure_release_sample_data
+
+
+def test__find_max_pressure_release(data: List[Valve]):
+
+    tunnel_system = TunnelSystem.from_valves(data)
+
+    max_pressure_release = find_max_pressure_release(tunnel_system, "AA", 30)
+
+    assert max_pressure_release == 2253
+# END test__find_max_pressure_release_sample_data

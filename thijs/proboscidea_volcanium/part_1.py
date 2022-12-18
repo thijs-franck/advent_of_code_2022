@@ -57,7 +57,10 @@ class TunnelSystem:
 
         if source == target:
             result: Path = []
+            
             self._shortest_paths[source][target] = result
+            self._shortest_paths[target][source] = result
+
             return result
         # END IF
 
@@ -84,6 +87,7 @@ class TunnelSystem:
                 branch.append(label)
 
                 self._shortest_paths[source][label] = branch
+                self._shortest_paths[label][source] = branch
 
                 if label == target:
                     return branch
