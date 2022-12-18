@@ -1,8 +1,6 @@
 import re
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
-from functools import cache
-from itertools import permutations
 from os import path
 from typing import Deque, Dict, Iterable, List, Optional, Set
 
