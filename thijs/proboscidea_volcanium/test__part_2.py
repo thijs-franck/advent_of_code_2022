@@ -3,7 +3,7 @@ from typing import List
 
 from pytest import fixture
 
-from .part_1 import (read_valves, TunnelSystem, find_max_pressure_release, Valve)
+from .part_2 import TunnelSystem, Valve, find_max_pressure_release, read_valves
 
 
 @fixture
@@ -19,13 +19,19 @@ def data() -> List[Valve]:
     return list(read_valves(INPUT_PATH))
 # END data
 
+
 def test__find_max_pressure_release_sample_data(sample_data: List[Valve]):
 
     tunnel_system = TunnelSystem.from_valves(sample_data)
 
-    max_pressure_release = find_max_pressure_release(tunnel_system, "AA", 30)
+    max_pressure_release = find_max_pressure_release(
+        tunnel_system,
+        "AA",
+        2,
+        26
+    )
 
-    assert max_pressure_release == 1651
+    assert max_pressure_release == 1707
 # END test__find_max_pressure_release_sample_data
 
 
