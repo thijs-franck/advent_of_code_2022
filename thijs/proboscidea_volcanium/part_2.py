@@ -1,6 +1,7 @@
 import re
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
+from itertools import combinations
 from os import path
 from typing import Deque, Dict, Iterable, List, Optional, Set, Tuple
 
@@ -8,6 +9,7 @@ INPUT_PATH = path.join(path.dirname(__file__), "data")
 
 Label = str
 Path = List[str]
+Partition = Set[Label]
 
 
 @dataclass
@@ -21,8 +23,6 @@ class Valve:
     label: Label
     flow_rate: int
     neighbors: Set[Label]
-
-    opened = False
 # END Valve
 
 
@@ -48,10 +48,6 @@ class TunnelSystem:
 
         return instance
     # END from_valves
-
-    def current_flow_rate(self) -> int:
-        return sum(valve.flow_rate for valve in self.nodes.values() if valve.opened)
-    # END current_flow_rate
 
     def shortest_path(self, source: Label, target: Label) -> Path:
 
@@ -159,100 +155,76 @@ def find_unblocked_valves(tunnel_system: TunnelSystem) -> Set[Label]:
 # END find_unblocked_valves
 
 
-def dfs(tunnel_system: TunnelSystem, current_valve: Label, closed_valves: Set[Label], time_remaining: int, pressure_released: int = 0) -> Tuple[int, Path]:
+def divide(labels: Iterable[Label], max_imbalance: int = 1) -> Iterable[Tuple[Partition, Partition]]:
 
-    max_pressure_released: int = pressure_released
-    optimal_path: Path = []
+    first, *others = labels
 
-    for valve in closed_valves:
+    if len(others) == 0:
+        return {first}, {}
+    # END IF
 
-        path = tunnel_system.shortest_path(current_valve, valve)
+    for i in range(max_imbalance):
+        for combination in combinations(labels, i + len(others) // 2):
+            a = set(combination)
+            a.add(first)
 
-        # A valve needs to be open for at least one minute to be of any effect
-        if len(path) > (time_remaining - 2):
-            continue
-        # END IF
+            b = {label for label in others if label not in a}
 
-        flow_rate = tunnel_system.nodes[valve].flow_rate
-        pressure_over_time = flow_rate * (time_remaining - len(path))
-
-        valves_remaining = closed_valves.copy()
-        valves_remaining.discard(valve)
-
-        potential_pressure_released, _ = dfs(
-            tunnel_system,
-            valve,
-            valves_remaining,
-            time_remaining - len(path),
-            pressure_released + pressure_over_time
-        )
-
-        if potential_pressure_released > max_pressure_released:
-            max_pressure_released = potential_pressure_released
-            optimal_path = path
-        # END IF
-
+            yield a, b
+        # END LOOP
     # END LOOP
-
-    return max_pressure_released, optimal_path
-# END dfs
+# END divide
 
 
-@dataclass
-class Worker:
+def find_max_pressure_release(tunnel_system: TunnelSystem, starting_valve: Label, minutes: int) -> int:
 
-    destination: Label
-    tunnel_system: TunnelSystem
-    valid_destinations: Set[Label]
-    max_ticks: int
+    def dfs(current_valve: Label, closed_valves: Set[Label], time_remaining: int, pressure_released: int = 0) -> int:
 
-    ticks = 0
-    ticks_remaining = 1
+        result = pressure_released
 
-    def tick(self):
-        self.ticks += 1
-        self.ticks_remaining -= 1
+        for valve in closed_valves:
 
-        if self.ticks_remaining == 0:
-            self.tunnel_system.nodes[self.destination].opened = True
+            path = tunnel_system.shortest_path(current_valve, valve)
 
-            _, path = dfs(
-                self.tunnel_system,
-                self.destination,
-                self.valid_destinations,
-                self.max_ticks - self.ticks
+            # A valve needs to be open for at least one minute to be of any effect
+            if len(path) > (time_remaining - 2):
+                continue
+            # END IF
+
+            flow_rate = tunnel_system.nodes[valve].flow_rate
+            pressure_over_time = flow_rate * (time_remaining - len(path))
+
+            valves_remaining = closed_valves.copy()
+            valves_remaining.discard(valve)
+
+            potential_pressure_released = dfs(
+                valve,
+                valves_remaining,
+                time_remaining - len(path),
+                pressure_released + pressure_over_time
             )
 
-            if len(path) > 0:
-                self.destination = path[-1]
-                self.valid_destinations.discard(self.destination)
-                self.ticks_remaining = len(path)
-            # END IF
-        # END IF
-    # END tick
-# END Worker
-
-
-def find_max_pressure_release(tunnel_system: TunnelSystem, starting_valve: Label, n_workers: int, minutes: int):
-
-    unblocked_valves = find_unblocked_valves(tunnel_system)
-    workers = [
-        Worker(starting_valve, tunnel_system, unblocked_valves, minutes)
-        for _ in range(n_workers)
-    ]
-    pressure_released = 0
-
-    for time_spent in range(minutes):
-
-        for worker in workers:
-            worker.tick()
+            result = max(
+                result,
+                potential_pressure_released
+            )
         # END LOOP
 
-        current_flow_rate = tunnel_system.current_flow_rate()
-        pressure_released += current_flow_rate * (minutes - (time_spent + 1))
+        return result
+    # END dfs
+
+    unblocked_valves = find_unblocked_valves(tunnel_system)
+    max_pressure_released = 0
+
+    for adventurer, elephant in divide(unblocked_valves, max_imbalance=2):
+        pressure_released = sum([
+            dfs(starting_valve, adventurer, minutes),
+            dfs(starting_valve, elephant, minutes)
+        ])
+        max_pressure_released = max(max_pressure_released, pressure_released)
     # END LOOP
 
-    return pressure_released
+    return max_pressure_released
 # END find_max_pressure_release
 
 
@@ -261,7 +233,10 @@ if __name__ == "__main__":
     tunnel_system = TunnelSystem.from_valves(valves)
 
     max_pressure_release = find_max_pressure_release(
-        tunnel_system, "AA", 2, 26)
+        tunnel_system,
+        "AA",
+        26
+    )
 
     print(max_pressure_release)
 # END IF
