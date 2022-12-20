@@ -164,7 +164,7 @@ def divide(labels: Iterable[Label], max_imbalance: int = 1) -> Iterable[Tuple[Pa
     # END IF
 
     for i in range(max_imbalance):
-        for combination in combinations(labels, i + len(others) // 2):
+        for combination in combinations([first, *others], i + len(others) // 2):
             a = set(combination)
             a.add(first)
 
